@@ -1,0 +1,31 @@
+section {
+  display: flex;
+  flex-direction: column;
+  flex-basis: 50%;
+  gap: 1rem;
+  height: 100%;
+  padding: 1rem;
+}
+
+.detail {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1rem;
+  border-radius: 25px;
+  font-size: 1.25rem;
+  text-transform: capitalize;
+  background-color: #f9f9f9;
+}
+
+.detail__content {
+  display: flex;
+  flex-direction: column;
+  flex-basis: 60%;
+}
+
+img {
+  display: flex;
+  flex-basis: 40%;
+  width: 50%;
+}

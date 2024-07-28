@@ -1,0 +1,7 @@
+.detail__content--key {
+  font-weight: 600;
+}
+
+.detail__content--value {
+  text-transform: capitalize;
+}
