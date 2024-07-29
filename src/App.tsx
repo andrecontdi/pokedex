@@ -12,9 +12,13 @@ function App() {
 
   return (
     <>
-      <List onShowDetail={handleShowDetail} />
-      {!pokemonName && <p>Select any Pokemon to show its details</p>}
-      {pokemonName && <Detail pokemonName={pokemonName} />}
+      <header>
+        <h1>pokedex react</h1>
+      </header>
+      <main>
+        <List onShowDetail={handleShowDetail} />
+        <Detail pokemonName={pokemonName} />
+      </main>
     </>
   );
 }

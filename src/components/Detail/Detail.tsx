@@ -4,7 +4,7 @@ import './Detail.css';
 import DetailItem from './DetailItem/DetailItem';
 
 interface DetailProps {
-  pokemonName: string;
+  pokemonName: string | undefined;
 }
 
 export default function Detail({ pokemonName }: DetailProps) {
@@ -32,14 +32,18 @@ export default function Detail({ pokemonName }: DetailProps) {
 
   return (
     <section>
-      <div className="detail">
-        <img src={pokemon?.sprites.other['official-artwork'].front_default} />
-        <div className="detail__content">
-          <DetailItem item="Name" value={pokemon?.name} />
-          <DetailItem item="Weight" value={getWeight()} />
-          <DetailItem item="Height" value={getHeight()} />
+      <h2>Pokemon Details</h2>
+      {!pokemonName && <p>Select any Pokemon to show its details</p>}
+      {pokemonName && (
+        <div className="detail">
+          <img src={pokemon?.sprites.other['official-artwork'].front_default} alt={pokemon?.name} />
+          <div className="detail__content">
+            <DetailItem item="Name" value={pokemon?.name} />
+            <DetailItem item="Weight" value={getWeight()} />
+            <DetailItem item="Height" value={getHeight()} />
+          </div>
         </div>
-      </div>
+      )}
     </section>
   );
 }

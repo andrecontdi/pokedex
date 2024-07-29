@@ -15,8 +15,7 @@
 
 body {
   margin: 0;
-  display: flex;
-  min-height: 100vh;
+  padding: 0;
   color: #213547;
   background-color: rgb(226 232 240);
 }

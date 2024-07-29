@@ -17,11 +17,20 @@ export default function List({ onShowDetail }: ListProps) {
       });
   }, []);
 
-  const pokemonItems = pokemonList.map((pokemon, index) => (
-    <li className={'list__item'} key={index} onClick={() => onShowDetail(pokemon.name)}>
-      {pokemon.name}
-    </li>
-  ));
+  const pokemonItems =
+    pokemonList && pokemonList.length > 0
+      ? pokemonList.map((pokemon, index) => (
+          <li aria-label={pokemon.name} className={'list__item'} key={index} onClick={() => onShowDetail(pokemon.name)}>
+            {pokemon.name}
+          </li>
+        ))
+      : [];
 
-  return <ul className="list">{pokemonItems}</ul>;
+  return (
+    <section>
+      <h2>Pokemons</h2>
+      {pokemonList && pokemonList.length === 0 && <p>Pokemons not found</p>}
+      {pokemonList && pokemonList.length > 0 && <ul className="list">{pokemonItems}</ul>}
+    </section>
+  );
 }
