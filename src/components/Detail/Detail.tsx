@@ -1,44 +1,48 @@
-import { useEffect, useState } from 'react';
-import { PokemonModel } from '../../models/pokemon.model';
+import { useQuery } from '@tanstack/react-query';
 import './Detail.css';
 import DetailItem from './DetailItem/DetailItem';
+import { ReactNode } from 'react';
 
 interface DetailProps {
   pokemonName: string | undefined;
 }
 
 export default function Detail({ pokemonName }: DetailProps) {
-  const [pokemon, setPokemon] = useState<PokemonModel>();
-
-  useEffect(() => {
-    fetch(`https://pokeapi.co/api/v2/pokemon/${pokemonName}`)
-      .then((response) => response.json())
-      .then((data: PokemonModel) => {
-        setPokemon(data);
-      });
-  }, [pokemonName]);
+  const { isFetching, error, data } = useQuery({
+    queryKey: ['pokemon', pokemonName],
+    queryFn: () => fetch(`https://pokeapi.co/api/v2/pokemon/${pokemonName}`).then((response) => response.json()),
+    enabled: !!pokemonName
+  });
 
   const getWeight = (): string => {
-    if (!pokemon?.weight) return '';
+    if (!data?.weight) return '';
 
-    return `${+pokemon?.weight / 10} kg`;
+    return `${+data?.weight / 10} kg`;
   };
 
   const getHeight = (): string => {
-    if (!pokemon?.height) return '';
+    if (!data?.height) return '';
 
-    return `${+pokemon?.height / 10} mts`;
+    return `${+data?.height / 10} mts`;
+  };
+
+  const setSatus = (): ReactNode => {
+    if (!data && !error && !isFetching) return <p>Select any Pokemon to show its details</p>;
+    if (isFetching) return <p>Loading...</p>;
+    if (error) return <p>Pokemon not found</p>;
+
+    return '';
   };
 
   return (
     <section>
       <h2>Pokemon Details</h2>
-      {!pokemonName && <p>Select any Pokemon to show its details</p>}
-      {pokemonName && (
+      {setSatus()}
+      {data && (
         <div className="detail">
-          <img src={pokemon?.sprites.other['official-artwork'].front_default} alt={pokemon?.name} />
+          <img src={data?.sprites.other['official-artwork'].front_default} alt={data?.name} />
           <div className="detail__content">
-            <DetailItem item="Name" value={pokemon?.name} />
+            <DetailItem item="Name" value={data?.name} />
             <DetailItem item="Weight" value={getWeight()} />
             <DetailItem item="Height" value={getHeight()} />
           </div>

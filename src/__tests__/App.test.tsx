@@ -1,6 +1,8 @@
-import { render, screen } from '@testing-library/react';
+import { render, renderHook, screen } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
 import App from '../App';
+import { QueryClient, QueryClientProvider, useQuery } from '@tanstack/react-query';
+import { PropsWithChildren } from 'react';
 
 describe('App', async () => {
   it('should render the App component', () => {

@@ -1,5 +1,6 @@
-import { useEffect, useState } from 'react';
-import { PokemonListModel, PokemonModel } from '../../models/pokemon.model';
+import { useQuery } from '@tanstack/react-query';
+import { ReactNode } from 'react';
+import { PokemonModel } from '../../models/pokemon.model';
 import './List.css';
 
 interface ListProps {
@@ -7,30 +8,32 @@ interface ListProps {
 }
 
 export default function List({ onShowDetail }: ListProps) {
-  const [pokemonList, setPokemonList] = useState<PokemonModel[]>([]);
-
-  useEffect(() => {
-    fetch('https://pokeapi.co/api/v2/pokemon?limit=20')
-      .then((response) => response.json())
-      .then((data: PokemonListModel) => {
-        setPokemonList(data.results);
-      });
-  }, []);
+  const { isFetching, error, data } = useQuery({
+    queryKey: ['pokemonList'],
+    queryFn: () => fetch(`https://pokeapi.co/api/v2/pokemon?limit=10`).then((response) => response.json())
+  });
 
   const pokemonItems =
-    pokemonList && pokemonList.length > 0
-      ? pokemonList.map((pokemon, index) => (
+    data && data.results.length > 0
+      ? data.results.map((pokemon: PokemonModel, index: number) => (
           <li aria-label={pokemon.name} className={'list__item'} key={index} onClick={() => onShowDetail(pokemon.name)}>
             {pokemon.name}
           </li>
         ))
       : [];
 
+  const setSatus = (): ReactNode => {
+    if (isFetching) return <p>Loading...</p>;
+    if (error) return <p>Pokemons not found</p>;
+
+    return '';
+  };
+
   return (
     <section>
       <h2>Pokemons</h2>
-      {pokemonList && pokemonList.length === 0 && <p>Pokemons not found</p>}
-      {pokemonList && pokemonList.length > 0 && <ul className="list">{pokemonItems}</ul>}
+      {setSatus()}
+      {!error && data && data.results.length > 0 && <ul className="list">{pokemonItems}</ul>}
     </section>
   );
 }

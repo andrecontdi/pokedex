@@ -1,9 +1,9 @@
 import { cleanup, render, screen, waitFor } from '@testing-library/react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import DetailItem from '../components/Detail/DetailItem/DetailItem';
-import { pokemonResponse } from './mocks/pokemonResponse';
+import { pokemonResponse } from '../__mocks__/pokemonResponse';
 
-describe('List', () => {
+describe('DetailItem', () => {
   afterEach(() => {
     vi.resetAllMocks();
 

@@ -1,31 +1,44 @@
-import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { QueryClient } from '@tanstack/react-query';
+import { cleanup, fireEvent, screen, waitFor } from '@testing-library/react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import List from '../components/List/List';
-import { pokemonListResponse } from './mocks/pokemonListResponse';
+import { pokemonListResponse } from '../__mocks__/pokemonListResponse';
+import { renderWithClient } from './utils';
 
 describe('List', () => {
+  const queryClient = new QueryClient();
+
   afterEach(() => {
-    vi.resetAllMocks();
+    vi.restoreAllMocks();
 
     cleanup();
   });
 
   it('should render the List component', () => {
-    render(<List onShowDetail={() => {}} />);
+    renderWithClient(queryClient, <List onShowDetail={() => {}} />);
     const h2 = screen.queryByText('Pokemons');
     expect(h2).not.toBeNull();
   });
 
-  it('should render not found message', () => {
+  it('should render not found message', async () => {
     vi.spyOn(window, 'fetch').mockImplementationOnce(() => {
-      return Promise.resolve({
-        json: () => Promise.resolve({ results: [] })
-      } as Response);
+      return Promise.reject('Something went wrong');
     });
 
-    render(<List onShowDetail={() => {}} />);
-    const p = screen.getByText('Pokemons not found');
-    expect(p).not.toBeNull();
+    // vi.mock('react-query', () => ({
+    //   useQuery: vi.fn().mockReturnValue(() => ({
+    //     isFetching: null,
+    //     error: () => {},
+    //     data: null
+    //   }))
+    // }));
+
+    renderWithClient(queryClient, <List onShowDetail={() => {}} />);
+    await waitFor(() => {
+      const p = screen.getByText('Pokemons not found');
+      expect(p).not.toBeNull();
+      expect(p?.textContent).toBe('Pokemons not found');
+    });
   });
 
   it('should render the pokemon list', async () => {
@@ -35,10 +48,11 @@ describe('List', () => {
       } as Response);
     });
 
-    render(<List onShowDetail={() => {}} />);
+    renderWithClient(queryClient, <List onShowDetail={() => {}} />);
     await waitFor(() => {
       const li = screen.getByText('bulbasaur');
       expect(li).not.toBeNull();
+      expect(li?.textContent).toBe('bulbasaur');
     });
   });
 
@@ -50,7 +64,7 @@ describe('List', () => {
       } as Response);
     });
 
-    render(<List onShowDetail={onShowDetail} />);
+    renderWithClient(queryClient, <List onShowDetail={onShowDetail} />);
     await waitFor(() => {
       const li = screen.getByRole('listitem', { name: 'bulbasaur' });
       fireEvent.click(li);

@@ -1,9 +1,13 @@
-import { cleanup, render, screen, waitFor } from '@testing-library/react';
+import { QueryClient } from '@tanstack/react-query';
+import { cleanup, screen, waitFor } from '@testing-library/react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
+import { pokemonResponse } from '../__mocks__/pokemonResponse';
 import Detail from '../components/Detail/Detail';
-import { pokemonResponse } from './mocks/pokemonResponse';
+import { renderWithClient } from './utils';
 
-describe('List', () => {
+describe('Detail', () => {
+  const queryClient = new QueryClient();
+
   afterEach(() => {
     vi.resetAllMocks();
 
@@ -11,13 +15,13 @@ describe('List', () => {
   });
 
   it('should render the Detail component', () => {
-    render(<Detail pokemonName="bulbasaur" />);
+    renderWithClient(queryClient, <Detail pokemonName="bulbasaur" />);
     const h2 = screen.queryByText('Pokemon Details');
     expect(h2).not.toBeNull();
   });
 
   it('should render message if no pokemon selected', async () => {
-    render(<Detail pokemonName="" />);
+    renderWithClient(queryClient, <Detail pokemonName="" />);
     await waitFor(() => {
       const p = screen.queryByText('Select any Pokemon to show its details');
       expect(p).not.toBeNull();
@@ -31,7 +35,7 @@ describe('List', () => {
       } as Response);
     });
 
-    render(<Detail pokemonName="bulbasaur" />);
+    renderWithClient(queryClient, <Detail pokemonName="bulbasaur" />);
     await waitFor(() => {
       const p = screen.queryByText('bulbasaur');
       expect(p).not.toBeNull();
@@ -46,7 +50,7 @@ describe('List', () => {
       } as Response);
     });
 
-    render(<Detail pokemonName="bulbasaur" />);
+    renderWithClient(queryClient, <Detail pokemonName="bulbasaur" />);
     await waitFor(() => {
       const p = screen.queryByText('0.7 mts');
       expect(p).not.toBeNull();
@@ -61,7 +65,7 @@ describe('List', () => {
       } as Response);
     });
 
-    render(<Detail pokemonName="bulbasaur" />);
+    renderWithClient(queryClient, <Detail pokemonName="bulbasaur" />);
     await waitFor(() => {
       const p = screen.queryByText('6.9 kg');
       expect(p).not.toBeNull();
@@ -76,7 +80,7 @@ describe('List', () => {
       } as Response);
     });
 
-    render(<Detail pokemonName="bulbasaur" />);
+    renderWithClient(queryClient, <Detail pokemonName="bulbasaur" />);
     await waitFor(() => {
       const img = screen.queryByAltText('bulbasaur');
       expect(img).not.toBeNull();
